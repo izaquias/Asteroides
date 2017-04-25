@@ -1,0 +1,27 @@
+                Estórias do usuário - asteróids
+
+1.Como um usuário quero que a nave possa atirar, em frente, em uma
+determinada direção e/ou objeto(naves ou meteóros, por exemplo).
+
+2.Como usuário quero que a nave possa movimetar - se em frente e
+dependendo das minhas exigencias ela possa também ter uma rotação 
+para que possa escolher uma nova trajetória.
+
+3.Como um asteróide quero ter possibilidade de trafegar pela tela em
+diferentes lugares.
+
+4.Como um usuário, espero que a nave possa atirar e atingir objetos
+na tela, e que possa destruí - los(naves ou asteróides).
+
+5.Como um asteróide, espero que, quando atingido, quero e possa
+ dividir - me em fragmentos menores. E que esses pequenos fragmen-
+tos(asteróides menores)  continuem movimetando - se pela tela.
+
+5.Como um asteróide, quero ter a possibilidade de destruir a nave
+do usuário, ao colidir - me com a mesma.
+
+6.Como um usuário, a medida que a nave destruir cada meteóro,
+tanto os maiores quanto o menores, seja contabilizada uma pontua-
+ção; para status do usuário.
+ 
+ 
