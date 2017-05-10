@@ -7,17 +7,21 @@ application =
 {
 	content =
 	{
-		width = 320,
-		height = 480, 
+		--graphicsCompatibility = 0,
+		--width = 320,
+		--height = 480,
+		width = 768,
+		height = 1024, 
 		scale = "letterbox",
+		--scale = "zoomStretch",
 		fps = 60,
 		
 		--[[
 		imageSuffix =
 		{
-			    ["@2x"] = 2,
+			    ["@2x"] = 20,
 			    ["@4x"] = 4,
 		},
-		--]]
+		]]
 	},
 }
