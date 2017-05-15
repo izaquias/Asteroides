@@ -6,12 +6,18 @@
 
 -- Your code here
 
+--local principal = require("principal")
 
+local composer = require("composer")
+--local scene = composer.newScene()
+composer.gotoScene( "principal") 
+
+--[[
 local physics = require("physics")
 
 physics.start()
 
-physics.getGravity( 0, 9.8)
+physics.getGravity( 9.8, 0)
 
 math.randomseed( os.time() )
 
@@ -34,48 +40,52 @@ local widget = require("widget")
 
 local butoes = {}
 
-local spaceScreen = {
+local SheetInfo = {}
 
- espacoTela = {
-	objeto, -- = display.newImageRect("fundo.png", 768, 1024)
-	x = 0,
-	y = 0,
-	width = 768,
-	height = 1024  
-},
+SheetInfo.sheet =
+{
+    frames = {
+    
+        {
+            -- asteroid1
+            x=48,
+            y=285,
+            width=26,
+            height=30,
 
- meteoro = {
-	objeto, -- = display.newImageRect("asteroid01.png", width = 80, height = 80 )
-	x = 0,
-	y = 0,
-	width = 80,
-	height = 80
-},
+        },
+        {
+            -- asteroid01
+            x=1,
+            y=285,
+            width=45,
+            height=46,
 
- meteoro2 = {
-     objeto, -- = display.newImageRect("asteroid1.png", width = 50, height = 50 )
-     x = 0,
-     y = 0,
-     width = 50,
-     height = 50	
-},
+        },
+        {
+            -- laser
+            x=76,
+            y=285,
+            width=10,
+            height=50,
 
- nave = {
-	objeto,-- = display.newImageRect("ship.png", 600, 200),
-	x = 0, 
-	y = 0,
-	width = 40,
-	height = 40	
-},
+        },
+        {
+            -- ship
+            x=1,
+            y=1,
+            width=190,
+            height=282,
 
-laser = {
-	objeto,-- = display.newImageRect( "laser.png", 20, 50)
-	x = 0,
-	y = 0,
-	width = 20,
-	height = 20 
-}
-
+            sourceX = 65,
+            sourceY = 13,
+            sourceWidth = 320,
+            sourceHeight = 320
+        },
+    },
+    
+    sheetContentWidth = 192,
+    sheetContentHeight = 336
 }
 
 local asteroidsTable = {}
@@ -99,16 +109,12 @@ fundoTela.x = display.contentCenterX
 fundoTela.y = display.contentCenterY
 
 
---physics.addBody( fundoTela, static, {friction = 1, bounce = 2, density = 0.3, radius =10} )
+--local conjuntoTela = display.newImageRect("sprites/sprite.png",200,240)
 
---nave = display.newImageRect( menuJogo, objeto, 4, 98, 79 )
---[[
-spaceScreen.nave = display.newImageRect( menuJogo, objeto, 4, 98, 79 )
-spaceScreen.nave.x = display.contentCenterX
-spaceScreen.nave.y = display.contentHeight - 100
-physics.addBody( nave, {radius = 30} )
-spaceScreen.nave.nome = "nave"
-]]
+
+--physics.addBody( fundoTela, static, {friction = 0, bounce = 0, density = 0, radius =0} )
+
+
 
 vidaTexto = display.newText( uiGrupo, "vidas: ".. vidas, 200, 80, native.systemFont, 36 )
 pontosTexto = display.newText( uiGrupo, "pontos: "..pontos, 600, 80, native.systemFont, 36 )
@@ -120,9 +126,7 @@ local function atualizarStatusPlayer()
 
 end
 
---tiro = display.newImageRect( "laser.png", 20, 50)
---tiro.x = display.contentCenterX
---tiro.y = display.contentCenterY
+
 local player = display.newImageRect("ship.png", 200, 200)
 
 --physics.addBody( player, {radius = 30})
@@ -188,5 +192,5 @@ for j=1, #buttons do
 	buttons[j]:addEventListener("touch", rotacionarObjeto)
 end
 
-
+]]--
 
