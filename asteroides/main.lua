@@ -6,11 +6,12 @@
 
 -- Your code here
 
---local principal = require("principal")
+local principal = require("principal")
 
 local composer = require("composer")
 --local scene = composer.newScene()
-composer.gotoScene( "principal") 
+--composer.gotoScene( "principal") 
+composer.gotoScene( "Game") 
 
 --[[
 local physics = require("physics")
