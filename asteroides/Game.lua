@@ -27,9 +27,10 @@ local pontosTexto
 
 local fundoTela
 local navePlayer
-local laser
+--local laser
 local asteroid
-local gameLoopTimer
+local loopTimerAsteroid
+local loopTimerInimigo
 
 local vidas = 3
 local pontos = 0
@@ -47,6 +48,7 @@ local uiGrupo = display.newGroup()
     navePlayer = display.newImageRect( sheetObjects, 4, 98, 79)
     navePlayer.x = display.contentCenterX
     navePlayer.y = h - 100
+    --navePlayer:setFillColor( 0,0,1 )
     --Teste a física depois!
    -- physics.addBody( navePlayer ,"static",{friction = 1, bounce = 0, radius = 30})
 
@@ -118,24 +120,27 @@ function scene:destroy(evento)
     local CenaGrupo = self.view
     -- Code here runs prior to the removal of scene's view 
 end
-vidaTexto = display.newText( uiGrupo, "vidas: ".. vidas, 200, 80, native.systemFont, 36 )
+    vidaTexto = display.newText( uiGrupo, "vidas: ".. vidas, 200, 80, native.systemFont, 36 )
     pontosTexto = display.newText( uiGrupo, "pontos: "..pontos, 600, 80, native.systemFont, 36 )
 
     display.setStatusBar( display.HiddenStatusBar )
-
+--[[
  local function atualizarStatusPlayer()
 
 	vidaTexto.text = "vidas: "..vidas
 	pontosTexto.text = "pontos: "..pontos
 
- end
+ end]]
 
  local function criarAsteroid(evento)
  	--local asteroid = display.newImageRect( menuJogo, sheetObjects, 2, 102, 85 )
- 	local asteroid = display.newCircle( menuJogo, 100, 100, 30 )
+ 	asteroid = display.newImageRect(menuJogo,"meteoro.png", 102,85)
+ 	asteroid:setFillColor( 0,1,0 )
+ 	 --asteroid = display.newCircle( menuJogo, 100, 100, 30 )
  	table.insert( asteroidsTable,  asteroid )
  	physics.addBody( asteroid, "dinamic", {radius = 40, bounce = 1, friction = 0.8} )
  	asteroid.myName = "asteroid" --asteroid1
+ 	--asteroid:setFillColor( 0,0.4,0 )
 
  	local geraPosiAsteroid = math.random(3)
 
@@ -143,13 +148,13 @@ vidaTexto = display.newText( uiGrupo, "vidas: ".. vidas, 200, 80, native.systemF
 		asteroid.x = -60
 		asteroid.y = math.random(512)
 		--asteroid:applyForce( 100, 0 )
-		asteroid:setLinearVelocity( math.random( 40, 500 ), math.random( 20, 60 ) )
+		asteroid:setLinearVelocity( math.random( 40, 120 ), math.random( 20, 60 ) )
         --timer.performWithDelay
      elseif geraPosiAsteroid == 2 then -- cima
      	asteroid.x = math.random( display.contentWidth )
      	asteroid.y = -60
      	--asteroid:applyForce( 10, -20 )
-     	asteroid:setLinearVelocity( math.random(-40, 40), math.random(100,1000) )
+     	asteroid:setLinearVelocity( math.random(-40, 40), math.random(40,120) )
      
      elseif geraPosiAsteroid == 3 then -- direita
         asteroid.x = display.contentWidth + 60
@@ -163,7 +168,7 @@ end
 
 --criarAsteroid()
 
-local function chamarObjetosJogo()
+local function chamarAsteroid()
 	criarAsteroid()--cria os asteroides na tela!
     
     for i = #asteroidsTable, 1, -1 do
@@ -179,9 +184,59 @@ local function chamarObjetosJogo()
 
 end
 
-gameLoopTimer = timer.performWithDelay( 500, chamarObjetosJogo, 0 )
+loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
 
-local function restoreShip()
+local function criarInimigo(evento)
+    
+    inimigo = display.newCircle( menuJogo, 100, 100, 30 )
+ 	inimigo:setFillColor( 1,1,1 )
+ 	 
+ 	table.insert( asteroidsTable,  inimigo )
+ 	physics.addBody( inimigo, "dinamic", {radius = 40, bounce = 1, friction = 0.8} )
+ 	inimigo.myName = "inimigo" 
+ 	
+ 	local geraPosiInimigo = math.random(3)
+
+	if geraPosiAsteroid == 1 then -- esquerda
+		inimigo.x = -60
+		inimigo.y = math.random(512)
+		--asteroid:applyForce( 100, 0 )
+		inimigo:setLinearVelocity( math.random( 40, 100 ), math.random( 20, 60 ) )
+        --timer.performWithDelay
+     elseif geraPosiInimigo == 2 then -- cima
+     	inimigo.x = math.random( display.contentWidth )
+     	inimigo.y = -60
+     	--asteroid:applyForce( 10, -20 )
+     	inimigo:setLinearVelocity( math.random(-40, 40), math.random(40,100) )
+     
+     elseif geraPosiInimigo == 3 then -- direita
+        inimigo.x = display.contentWidth + 60
+        inimigo.y = math.random( 512 )	
+
+        inimigo:setLinearVelocity( math.random( -100, -40 ), math.random( 20, 60 ) )
+	end	
+	    inimigo:applyTorque( math.random(-10,2) )
+end
+
+local function chamarInimigo()
+	criarInimigo()--cria os inimigos na tela!
+    
+    for i = #asteroidsTable, 1, -1 do
+       local inimigoAlvo = asteroidsTable[i]
+
+       if inimigoAlvo.x < -100 or inimigoAlvo.x > w + 100 or 
+       	  inimigoAlvo.y < -100 or inimigoAlvo.y > h + 100
+       then
+       display.remove( inimigoAlvo )	  
+       table.remove( asteroidsTable, i )
+       end	
+    end
+
+end
+
+loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0)
+
+local function restaurarNave()
 	navePlayer.isBodyActive = false
 	navePlayer:setLinearVelocity(0, 0)
 	navePlayer.x = display.contentCenterX
@@ -201,7 +256,7 @@ local function onCollision(event)
 			(obj1.myName == "asteroid" and obj2.myName == "laser") then
 			
 			display.remove( obj1 )
-			display.remove( obj1 )
+			display.remove( obj2 )
 
 			for i = #asteroidsTable, 1, -1 do
                     if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
@@ -221,7 +276,7 @@ local function onCollision(event)
 		        	   	   display.remove( navePlayer )
 		        	   else
 		        	       navePlayer.alpha = 0
-		        	       timer.performWithDelay(1000,restoreShip)	   
+		        	       timer.performWithDelay(1000,restaurarNave)	   
 		        	   end
 		        end
         end
@@ -229,7 +284,7 @@ local function onCollision(event)
 end
 
 local function criarLaser(evento)
-	local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
+   local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
 	physics.addBody( laser, "dinamic", {isSensor = true})
 	laser.isBullet = true
 	laser.myName = "laser"
@@ -239,7 +294,8 @@ local function criarLaser(evento)
 	--laser.collType = "laser"
 	laser:toBack( )
 	
-	transition.to( laser, {y= -110, time = 500, onComplete = function()
+	transition.to( laser, {y= -110, time = 500, 
+		onComplete = function()
 		display.remove( laser )--verificar colisão!!
 	end} )
 end 
