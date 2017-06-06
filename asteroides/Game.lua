@@ -10,7 +10,7 @@ local physics = require("physics")
 physics.start( )
 physics.setGravity(0,0)
 
-math.randomseed(os.time())
+--math.randomseed(os.time())
 
 --Localização imagens
 local sheetInfo = require("sprites.sprite")
@@ -293,11 +293,37 @@ local function criarLaser(evento)
 	
 	--laser.collType = "laser"
 	laser:toBack( )
-	
+
+if evento.phase == "began" and navePlayer.rotation == -180 then
+	--laser:translate( deltaX, deltaY )
+	transition.to( laser, {x = -100, time = 500,
+		onComplete = function ()
+		display.remove(laser)
+	end} )
+end
+
+--if evento.phase == "began" and navePlayer.rotation == 0 then
 	transition.to( laser, {y= -110, time = 500, 
 		onComplete = function()
 		display.remove( laser )--verificar colisão!!
 	end} )
+--end
+--[[
+if evento.phase == "began" and navePlayer.rotation == 90 then	
+	transition.to( laser, {x = 100, time = 500,
+		onComplete = function ()
+		display.remove(laser)
+	end} )
+end
+if evento.phase == "began" and navePlayer.rotation == -90 then
+	transition.to( laser, {x = 100, time = 500,
+		onComplete = function ()
+		display.remove(laser)
+	end} )
+end	
+	
+]]
+	
 end 
 
 local tiroLazer
@@ -316,17 +342,16 @@ local rotacionarObjeto = function(e)
 	if eventName == "began" or eventName == "moved" then
 		if direction == "up"  then 
 			navePlayer.rotation = 0 
-
-			laser = navePlayer.rotation
+           --laser.rotation = 0
 		elseif direction == "down" then 
 			navePlayer.rotation = 180
-			laser = navePlayer.rotation
+			--laser = laser.rotation =180
 		elseif direction == "right" then---ALTERADO NESSE BLOCO!
 			navePlayer.rotation = 90
-			laser = navePlayer.rotation
+			--laser = laser.rotation = 90
 		elseif direction == "left" then
 			navePlayer.rotation = -90
-			laser = navePlayer.rotation
+			---laser = laser.rotation = -90
 		end
 	
 	end
@@ -397,6 +422,11 @@ local atualizarPosicaoPlayer = function()
 		navePlayer.y = navePlayer.height * -5
 	elseif navePlayer.y >= h - navePlayer.height * -5 then 
 		navePlayer.y = h - navePlayer.height * -5
+	else
+		--xAxis = nil
+		--yAxis = nil
+		--navePlayer.x = navePlayer.x - xAxis 
+		--navePlayer.y = navePlayer.y - yAxis
 	end 
 end
 
