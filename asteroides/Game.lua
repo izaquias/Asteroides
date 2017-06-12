@@ -248,6 +248,30 @@ local function restaurarNave()
 	end })
 end
 
+local function destruirInimigo(evento)
+	if (event.phase == "began") then
+         local obj1 = event.object1
+		 local obj2 = event.object2
+            if (obj1.myName == "laser" and obj2.myName == "inimigo") or 
+			   (obj1.myName == "inimigo" and obj2.myName == "laser") then
+			
+			display.remove( obj1 )
+			display.remove( obj2 )
+
+			  for i = #asteroidsTable, 1, -1 do
+                    if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
+                       table.remove( asteroidsTable, i )
+                        break
+                    end	
+		        end
+		     pontos = pontos + 100
+		     pontosTexto.text = "Pontos:"..pontos
+         end
+	end  
+end
+
+--Runtime:addEventListener("collision",destruirInimigo)
+
 local function onCollision(event)
 	if (event.phase == "began") then
 		local obj1 = event.object1
@@ -266,7 +290,22 @@ local function onCollision(event)
 		        end
 		     pontos = pontos + 100
 		     pontosTexto.text = "Pontos:"..pontos   
-		elseif (obj1.myName == "ship" and obj2.myName == "asteroid") or 
+		else if (obj1.myName == "laser" and obj2.myName == "inimigo") or 
+			   (obj1.myName == "inimigo" and obj2.myName == "laser") then
+			
+			display.remove( obj1 )
+			display.remove( obj2 )
+
+			  for i = #asteroidsTable, 1, -1 do
+                    if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
+                       table.remove( asteroidsTable, i )
+                        break
+                    end	
+		        end
+		     pontos = pontos + 100
+		     pontosTexto.text = "Pontos:"..pontos
+         
+ 		elseif (obj1.myName == "ship" and obj2.myName == "asteroid") or 
 			   (obj1.myName == "asteroid" and obj2.myName == "ship") then      
 		        if (morreu == false) then
 		        	morreu = true
@@ -278,10 +317,12 @@ local function onCollision(event)
 		        	       navePlayer.alpha = 0
 		        	       timer.performWithDelay(1000,restaurarNave)	   
 		        	   end
-		        end
+		     end   end
         end
 	end
 end
+
+
 
 local function criarLaser(evento)
    local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
