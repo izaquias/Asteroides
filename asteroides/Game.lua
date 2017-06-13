@@ -248,76 +248,72 @@ local function restaurarNave()
 	end })
 end
 
-local function destruirInimigo(evento)
-	if (event.phase == "began") then
-         local obj1 = event.object1
-		 local obj2 = event.object2
-            if (obj1.myName == "laser" and obj2.myName == "inimigo") or 
-			   (obj1.myName == "inimigo" and obj2.myName == "laser") then
-			
-			display.remove( obj1 )
-			display.remove( obj2 )
-
-			  for i = #asteroidsTable, 1, -1 do
-                    if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
-                       table.remove( asteroidsTable, i )
-                        break
-                    end	
-		        end
-		     pontos = pontos + 100
-		     pontosTexto.text = "Pontos:"..pontos
-         end
-	end  
-end
-
---Runtime:addEventListener("collision",destruirInimigo)
-
 local function onCollision(event)
+	
 	if (event.phase == "began") then
+		
 		local obj1 = event.object1
 		local obj2 = event.object2
+		
 		if (obj1.myName == "laser" and obj2.myName == "asteroid") or 
 			(obj1.myName == "asteroid" and obj2.myName == "laser") then
 			
-			display.remove( obj1 )
-			display.remove( obj2 )
+			           display.remove( obj1 )
+			           display.remove( obj2 )
 
-			for i = #asteroidsTable, 1, -1 do
-                    if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
-                       table.remove( asteroidsTable, i )
-                        break
-                    end	
-		        end
-		     pontos = pontos + 100
-		     pontosTexto.text = "Pontos:"..pontos   
-		else if (obj1.myName == "laser" and obj2.myName == "inimigo") or 
-			   (obj1.myName == "inimigo" and obj2.myName == "laser") then
+			           for i = #asteroidsTable, 1, -1 do
+                            if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
+                                table.remove( asteroidsTable, i )
+                                break
+                            end	
+		                end
+		   
+		                pontos = pontos + 100
+		                pontosTexto.text = "Pontos:"..pontos   
+		   
+		    else if (obj1.myName == "laser" and obj2.myName == "inimigo") or 
+			        (obj1.myName == "inimigo" and obj2.myName == "laser") then
 			
-			display.remove( obj1 )
-			display.remove( obj2 )
+			           display.remove( obj1 )
+			           display.remove( obj2 )
 
-			  for i = #asteroidsTable, 1, -1 do
-                    if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
-                       table.remove( asteroidsTable, i )
-                        break
-                    end	
-		        end
-		     pontos = pontos + 100
-		     pontosTexto.text = "Pontos:"..pontos
+			            for i = #asteroidsTable, 1, -1 do
+                            if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
+                                table.remove( asteroidsTable, i )
+                                break
+                            end	
+		                end
+		                
+		                pontos = pontos + 100
+		                pontosTexto.text = "Pontos:"..pontos
          
- 		elseif (obj1.myName == "ship" and obj2.myName == "asteroid") or 
-			   (obj1.myName == "asteroid" and obj2.myName == "ship") then      
-		        if (morreu == false) then
-		        	morreu = true
-		        	vidas = vidas - 1
-		        	vidaTexto.text = "Vidas:"..vidas
-		        	   if (vidas == 0) then
-		        	   	   display.remove( navePlayer )
-		        	   else
-		        	       navePlayer.alpha = 0
-		        	       timer.performWithDelay(1000,restaurarNave)	   
-		        	   end
-		     end   end
+ 		            elseif (obj1.myName == "ship" and obj2.myName == "asteroid") or 
+			               (obj1.myName == "asteroid" and obj2.myName == "ship") then      
+		                    if (morreu == false) then
+		        	            morreu = true
+		        	            vidas = vidas - 1
+		        	            vidaTexto.text = "Vidas:"..vidas
+		        	            if (vidas == 0) then
+		        	   	            display.remove( navePlayer )
+		        	            else
+		        	               navePlayer.alpha = 0
+		        	               timer.performWithDelay(1000,restaurarNave)	   
+		        	            end
+                            end
+                    elseif (obj1.myName == "ship" and obj2.myName == "inimigo") or 
+			               (obj1.myName == "inimigo" and obj2.myName == "ship") then      
+		                    if (morreu == false) then
+		        	            morreu = true
+		        	            vidas = vidas - 1
+		        	            vidaTexto.text = "Vidas:"..vidas
+		        	            if (vidas == 0) then
+		        	   	            display.remove( navePlayer )
+		        	            else
+		        	               navePlayer.alpha = 0
+		        	               timer.performWithDelay(1000,restaurarNave)	   
+		        	            end
+                            end         		     
+		            end 
         end
 	end
 end
