@@ -37,27 +37,11 @@ local pontos = 0
 local morreu = false
 
 --Grupos dos elementos na tela
-local grupoPlanodeFundo = display.newGroup()
-local menuJogo = display.newGroup()
-local uiGrupo = display.newGroup()
-
-    fundoTela = display.newImageRect("espaço-cideral2.png", 800, 1400)
-    fundoTela.x = display.contentCenterX
-    fundoTela.y = display.contentCenterY
-
-    navePlayer = display.newImageRect( sheetObjects, 4, 98, 79)
-    navePlayer.x = display.contentCenterX
-    navePlayer.y = h - 100
-    --navePlayer:setFillColor( 0,0,1 )
-    --Teste a física depois!
-   -- physics.addBody( navePlayer ,"static",{friction = 1, bounce = 0, radius = 30})
-
-    physics.addBody( navePlayer, {radius = 30} )
-    navePlayer.myName = "ship"
-    navePlayer.x = w * .5 + 10
-    navePlayer.y = h * .5 + 100
-
-    buttons[1] = display.newImageRect("button.png", 60,50)
+local grupoPlanodeFundo
+local menuJogo
+local uiGrupo
+    
+buttons[1] = display.newImageRect("button.png", 60,50)
     buttons[1].x = 600
     buttons[1].y = 880
     buttons[1].move = "up"
@@ -80,8 +64,38 @@ local uiGrupo = display.newGroup()
     buttons[4].y = 950
     buttons[4].move = "right"
 
-function scene:create(evento)
 
+function scene:create(evento)
+   local grupoCena = self.view 
+
+   --physics.pause()
+   
+   grupoPlanodeFundo = display.newGroup()
+   menuJogo = display.newGroup()
+   uiGrupo = display.newGroup()
+
+   grupoCena:insert(grupoPlanodeFundo)
+   grupoCena:insert(menuJogo)
+   grupoCena:insert(uiGrupo)
+   
+   vidaTexto = display.newText( uiGrupo, "vidas: ".. vidas, 200, 80, native.systemFont, 36 )
+   pontosTexto = display.newText( uiGrupo, "pontos: "..pontos, 600, 80, native.systemFont, 36 )
+   
+
+   fundoTela = display.newImageRect("espaço-cideral2.png", 800, 1400)
+   fundoTela.x = display.contentCenterX
+   fundoTela.y = display.contentCenterY
+
+   navePlayer = display.newImageRect( sheetObjects, 4, 98, 79)
+   navePlayer.x = display.contentCenterX
+   navePlayer.y = h - 100
+   --navePlayer:setFillColor( 0,0,1 )
+   physics.addBody( navePlayer, {radius = 30} )
+   navePlayer.myName = "ship"
+   navePlayer.x = w * .5 + 10
+   navePlayer.y = h * .5 + 100
+
+    
    grupoPlanodeFundo:insert(fundoTela)
    menuJogo:insert(navePlayer)
    
@@ -89,6 +103,9 @@ function scene:create(evento)
    uiGrupo:insert(buttons[2])
    uiGrupo:insert(buttons[3])
    uiGrupo:insert(buttons[4])
+   
+   
+
 end	
 
 -- show()
@@ -99,7 +116,8 @@ function scene:show(evento)
  
     if ( phase ==  "did") then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-		 
+	    --physics.start( )
+        --Runtime:addEventListener("collision",onCollision)
     end
 end
 
@@ -111,6 +129,7 @@ function scene:hide(evento)
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
+         --Runtime:removeEventListener("collision",onCollision)
     end
 end
  
@@ -120,8 +139,7 @@ function scene:destroy(evento)
     local CenaGrupo = self.view
     -- Code here runs prior to the removal of scene's view 
 end
-    vidaTexto = display.newText( uiGrupo, "vidas: ".. vidas, 200, 80, native.systemFont, 36 )
-    pontosTexto = display.newText( uiGrupo, "pontos: "..pontos, 600, 80, native.systemFont, 36 )
+    
 
     display.setStatusBar( display.HiddenStatusBar )
 --[[
@@ -183,8 +201,10 @@ local function chamarAsteroid()
     end
 
 end
-
-loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
+if (vidas ~= 0) then
+   loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )	
+end
+--loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
 
 local function criarInimigo(evento)
     
@@ -235,6 +255,10 @@ local function chamarInimigo()
 end
 
 loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0)
+
+local function gameOver()
+	composer.gotoScene("Menu")
+end
 
 local function restaurarNave()
 	navePlayer.isBodyActive = false
@@ -294,7 +318,10 @@ local function onCollision(event)
 		        	            vidas = vidas - 1
 		        	            vidaTexto.text = "Vidas:"..vidas
 		        	            if (vidas == 0) then
+		        	   	            physics.pause()
 		        	   	            display.remove( navePlayer )
+		        	   	            
+		        	   	            timer.performWithDelay( 2000, gameOver)
 		        	            else
 		        	               navePlayer.alpha = 0
 		        	               timer.performWithDelay(1000,restaurarNave)	   
@@ -307,7 +334,10 @@ local function onCollision(event)
 		        	            vidas = vidas - 1
 		        	            vidaTexto.text = "Vidas:"..vidas
 		        	            if (vidas == 0) then
+		        	   	            physics.pause()
 		        	   	            display.remove( navePlayer )
+		        	   	            
+		        	   	            timer.performWithDelay( 2000, gameOver)
 		        	            else
 		        	               navePlayer.alpha = 0
 		        	               timer.performWithDelay(1000,restaurarNave)	   
@@ -321,7 +351,8 @@ end
 
 
 local function criarLaser(evento)
-   local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
+   if   evento.phase == "began" and  navePlayer.rotation == 90 then
+    local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
 	physics.addBody( laser, "dinamic", {isSensor = true})
 	laser.isBullet = true
 	laser.myName = "laser"
@@ -329,48 +360,83 @@ local function criarLaser(evento)
 	laser.y = navePlayer.y
 	
 	--laser.collType = "laser"
+	
 	laser:toBack( )
-
-if evento.phase == "began" and navePlayer.rotation == -180 then
+    
 	--laser:translate( deltaX, deltaY )
-	transition.to( laser, {x = -100, time = 500,
+	
+	--atira para direita
+	laser.rotation = 90
+	transition.to( laser, {x = 900, time = 500,
+	onComplete = function ()
+		display.remove(laser)
+	end} )
+elseif navePlayer.rotation == -90 then
+	local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
+	physics.addBody( laser, "dinamic", {isSensor = true})
+	laser.isBullet = true
+	laser.myName = "laser"
+	laser.x = navePlayer.x
+	laser.y = navePlayer.y
+	
+	laser:toBack( )
+      
+      --atira para esquerda!
+      laser.rotation = -90
+	  transition.to( laser, {x = -50, time = 500,
+	     onComplete = function ()
+	       display.remove(laser)
+	  end} )
+elseif navePlayer.rotation == 180 then
+    local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
+	physics.addBody( laser, "dinamic", {isSensor = true})
+	laser.isBullet = true
+	laser.myName = "laser"
+	laser.x = navePlayer.x
+	laser.y = navePlayer.y
+	
+	laser:toBack( )
+     --atira para baixo!
+     laser.rotation = 180
+	transition.to( laser, {y = 1400, time = 500,
 		onComplete = function ()
 		display.remove(laser)
 	end} )
-end
+elseif navePlayer.rotation == 0 then   
+    local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
+	physics.addBody( laser, "dinamic", {isSensor = true})
+	laser.isBullet = true
+	laser.myName = "laser"
+	laser.x = navePlayer.x
+	laser.y = navePlayer.y
+	
+	laser:toBack( )
+    --atira para cima!
+    laser.rotation = 0  
+     transition.to( laser, {y= -110, time = 500, 
+	    onComplete = function()
+	        display.remove( laser )
+	 end} ) 
 
---if evento.phase == "began" and navePlayer.rotation == 0 then
-	transition.to( laser, {y= -110, time = 500, 
-		onComplete = function()
-		display.remove( laser )--verificar colisão!!
-	end} )
---end
---[[
-if evento.phase == "began" and navePlayer.rotation == 90 then	
-	transition.to( laser, {x = 100, time = 500,
-		onComplete = function ()
-		display.remove(laser)
-	end} )
-end
-if evento.phase == "began" and navePlayer.rotation == -90 then
-	transition.to( laser, {x = 100, time = 500,
-		onComplete = function ()
-		display.remove(laser)
-	end} )
-end	
-	
-]]
-	
-end 
+--else 
+--	print( "Não fui programdo para fazer nada aqui!" )
+
+end--fim do elseif!
+
+end--fim do ouvinte! 
 
 local tiroLazer
 tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
                                x = display.contentWidth/2 - 280,
                              y = display.contentHeight/2 + 360,  
-                             shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }}  )
+                             shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }, onPress = criarLaser}  )
 
 tiroLazer:addEventListener( "tap", criarLaser )
-navePlayer:addEventListener( "tap", criarLaser )
+--navePlayer:addEventListener( "tap", criarLaser )
+
+if(vidas == 0) then
+   display.remove(tiroLazer)
+end
 
 local rotacionarObjeto = function(e)
 	local eventName = e.phase
@@ -446,6 +512,7 @@ end
 end
 
 local atualizarPosicaoPlayer = function()
+	if vidas ~= 0 then
 	navePlayer.x = navePlayer.x + xAxis
 	navePlayer.y = navePlayer.y + yAxis
 
@@ -459,12 +526,9 @@ local atualizarPosicaoPlayer = function()
 		navePlayer.y = navePlayer.height * -5
 	elseif navePlayer.y >= h - navePlayer.height * -5 then 
 		navePlayer.y = h - navePlayer.height * -5
-	else
-		--xAxis = nil
-		--yAxis = nil
-		--navePlayer.x = navePlayer.x - xAxis 
-		--navePlayer.y = navePlayer.y - yAxis
+	
 	end 
+  end
 end
 
 Runtime:addEventListener("enterFrame", atualizarPosicaoPlayer) 

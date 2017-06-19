@@ -6,15 +6,17 @@ local widget = require("widget")
 
 local scene = composer.newScene()
 
---math.randomseed(os.time())
+math.randomseed(os.time())
 
---composer.gotoScene("main")
 
 local function redirecionarGame()
+
+	composer.removeScene("Game")
     composer.gotoScene("Game")
 end
 
 local function VizualizarMaiorPontuacao()
+	composer.removeScene("MaiorPontuacao")
 	composer.gotoScene("MaiorPontuacao")
 end
 
