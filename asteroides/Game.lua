@@ -16,141 +16,32 @@ physics.setGravity(0,0)
 local sheetInfo = require("sprites.sprite")
 local sheetObjects = graphics.newImageSheet( "sprites/sprite.png", sheetInfo:getSheet() )
 
-local w = display.contentWidth
-local h = display.contentHeight
+ local w = display.contentWidth
+ local h = display.contentHeight
 
-local asteroidsTable = {}
-local buttons = {}
+ asteroidsTable = {}
+ buttons = {}
 
-local vidaTexto
-local pontosTexto
+ local vidaTexto
+ local pontosTexto
 
-local fundoTela
-local navePlayer
---local laser
-local asteroid
-local loopTimerAsteroid
-local loopTimerInimigo
+ local fundoTela
+ local navePlayer
+ local laser
+ local asteroid
+ local loopTimerAsteroid
+ local loopTimerInimigo
 
-local vidas = 3
-local pontos = 0
-local morreu = false
-local tiroLazer
+ local vidas = 3
+ local pontos = 0
+ local morreu = false
+ --local  tiroLazer
 
---Grupos dos elementos na tela
-local grupoPlanodeFundo = display.newGroup()
-local menuJogo = display.newGroup()
-local uiGrupo = display.newGroup()
-    
-buttons[1] = display.newImageRect("button.png", 60,50)
-    buttons[1].x = 600
-    buttons[1].y = 880
-    buttons[1].move = "up"
-    buttons[1].rotation = -90
-
-    buttons[2] = display.newImageRect("button.png", 60,50)
-    buttons[2].x = 600
-    buttons[2].y = 1020
-    buttons[2].move = "down"
-    buttons[2].rotation = 90
-
-    buttons[3] = display.newImageRect("button.png", 60,50)
-    buttons[3].x = 500 
-    buttons[3].y = 950
-    buttons[3].move = "left"
-    buttons[3].rotation = 180
-
-    buttons[4] = display.newImageRect("button.png", 60,50)
-    buttons[4].x = 700
-    buttons[4].y = 950
-    buttons[4].move = "right"
-
-
-function scene:create(evento)
-   local grupoCena = self.view 
-
-   --physics.pause()
-   
-   --grupoPlanodeFundo = display.newGroup()
-   --menuJogo = display.newGroup()
-   --uiGrupo = display.newGroup()
-
-   grupoCena:insert(grupoPlanodeFundo)
-   grupoCena:insert(menuJogo)
-   grupoCena:insert(uiGrupo)
-   
-   vidaTexto = display.newText( uiGrupo, "vidas: ".. vidas, 200, 80, native.systemFont, 36 )
-   pontosTexto = display.newText( uiGrupo, "pontos: "..pontos, 600, 80, native.systemFont, 36 )
-   
-
-   fundoTela = display.newImageRect("espaço-cideral2.png", 800, 1400)
-   fundoTela.x = display.contentCenterX
-   fundoTela.y = display.contentCenterY
-
-   navePlayer = display.newImageRect( sheetObjects, 4, 98, 79)
-   navePlayer.x = display.contentCenterX
-   navePlayer.y = h - 100
-   --navePlayer:setFillColor( 0,0,1 )
-   physics.addBody( navePlayer, {radius = 30} )
-   navePlayer.myName = "ship"
-   navePlayer.x = w * .5 + 10
-   navePlayer.y = h * .5 + 100
-   
-
---tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
-     --                          x = display.contentWidth/2 - 280,
-     --                        y = display.contentHeight/2 + 360,  
-     --                        shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }, onPress = criarLaser}  )
-
-    
-   grupoPlanodeFundo:insert(fundoTela)
-   menuJogo:insert(navePlayer)
-   --menuJogo:insert(tiroLazer)
-
-   uiGrupo:insert(buttons[1])
-   uiGrupo:insert(buttons[2])
-   uiGrupo:insert(buttons[3])
-   uiGrupo:insert(buttons[4])
-   
-   
-
-end	
-
--- show()
-function scene:show(evento)
- 
-    local CenaGrupo = self.view
-    local phase = evento.phase
- 
-    if ( phase ==  "did") then
-        -- Code here runs when the scene is still off screen (but is about to come on screen)
-	    --physics.start( )
-        --Runtime:addEventListener("collision",onCollision)
-    end
-end
-
--- hide()
-function scene:hide(evento)
- 
-    local CenaGrupo = self.view
-    local phase = evento.phase
- 
-    if ( phase == "will" ) then
-        -- Code here runs when the scene is on screen (but is about to go off screen)
-         --Runtime:removeEventListener("collision",onCollision)
-    end
-end
- 
--- destroy()
-function scene:destroy(evento)
- 
-    local CenaGrupo = self.view
-    -- Code here runs prior to the removal of scene's view 
-end
-
- local function criarAsteroid(evento)
+local function criarAsteroid(evento)
  	--local asteroid = display.newImageRect( menuJogo, sheetObjects, 2, 102, 85 )
- 	asteroid = display.newImageRect(menuJogo,"meteoro.png", 102,85)
+ 	print( menuJogo )
+ 	asteroid = display.newImageRect("meteoro.png", 102,85)
+
  	asteroid:setFillColor( 0,1,0 )
  	 --asteroid = display.newCircle( menuJogo, 100, 100, 30 )
  	table.insert( asteroidsTable,  asteroid )
@@ -182,8 +73,6 @@ end
         --asteroid:applyTorque( math.random(-6,6) )
 end
 
---criarAsteroid()
-
 local function chamarAsteroid()
 	criarAsteroid()--cria os asteroides na tela!
     
@@ -199,10 +88,6 @@ local function chamarAsteroid()
     end
 
 end
-if (vidas ~= 0) then
-   loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )	
-end
---loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
 
 local function criarInimigo(evento)
     
@@ -251,8 +136,6 @@ local function chamarInimigo()
     end
 
 end
-
-loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0)
 
 local function gameOver()
 	composer.gotoScene("Menu")
@@ -346,8 +229,6 @@ local function onCollision(event)
 	end
 end
 
-
-
 local function criarLaser(evento)
    if   evento.phase == "began" and  navePlayer.rotation == 90 then
     local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
@@ -431,12 +312,6 @@ tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
 
 --tiroLazer:addEventListener( "tap", criarLaser )
 
---navePlayer:addEventListener( "tap", criarLaser )
-
-if(vidas == 0) then
-   display.remove(tiroLazer)
-end
-
 local rotacionarObjeto = function(e)
 	local eventName = e.phase
 	local direction = e.target.move
@@ -486,10 +361,6 @@ local function moverNavePlayer(evento)
 	end
 end
 
-for j=1, #buttons do 
-	buttons[j]:addEventListener("touch", moverNavePlayer)
-end
-
 local function movimentarObjeto(evento)
 	if evento.phase == "ended" then
        transition.to( navePlayer, {x = evento.x, y = evento.y})
@@ -530,10 +401,168 @@ local atualizarPosicaoPlayer = function()
   end
 end
 
-Runtime:addEventListener("enterFrame", atualizarPosicaoPlayer) 
+function scene:create(evento)
+local grupoCena = self.view 
+
+   physics.pause()
+
+
+--Grupos dos elementos na tela
+ grupoPlanodeFundo = display.newGroup()
+ menuJogo = display.newGroup()
+ uiGrupo = display.newGroup()
+ 
+
+grupoCena:insert(grupoPlanodeFundo)
+grupoCena:insert(menuJogo)
+grupoCena:insert(uiGrupo)
+   
+
+buttons[1] = display.newImageRect("button.png", 60,50)
+    buttons[1].x = 600
+    buttons[1].y = 880
+    buttons[1].move = "up"
+    buttons[1].rotation = -90
+
+    buttons[2] = display.newImageRect("button.png", 60,50)
+    buttons[2].x = 600
+    buttons[2].y = 1020
+    buttons[2].move = "down"
+    buttons[2].rotation = 90
+
+    buttons[3] = display.newImageRect("button.png", 60,50)
+    buttons[3].x = 500 
+    buttons[3].y = 950
+    buttons[3].move = "left"
+    buttons[3].rotation = 180
+
+    buttons[4] = display.newImageRect("button.png", 60,50)
+    buttons[4].x = 700
+    buttons[4].y = 950
+    buttons[4].move = "right"
+
+   
+   vidaTexto = display.newText( uiGrupo, "vidas: ".. vidas, 200, 80, native.systemFont, 36 )
+   pontosTexto = display.newText( uiGrupo, "pontos: "..pontos, 600, 80, native.systemFont, 36 )
+   
+
+   fundoTela = display.newImageRect("espaço-cideral2.png", 800, 1400)
+   fundoTela.x = display.contentCenterX
+   fundoTela.y = display.contentCenterY
+
+   navePlayer = display.newImageRect( sheetObjects, 4, 98, 79)
+   navePlayer.x = display.contentCenterX
+   navePlayer.y = h - 100
+   --navePlayer:setFillColor( 0,0,1 )
+   physics.addBody( navePlayer, {radius = 30} )
+   navePlayer.myName = "ship"
+   navePlayer.x = w * .5 + 10
+   navePlayer.y = h * .5 + 100
+   
+
+--tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
+     --                          x = display.contentWidth/2 - 280,
+     --                        y = display.contentHeight/2 + 360,  
+     --                        shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }, onPress = criarLaser}  )
+
+    
+   grupoPlanodeFundo:insert(fundoTela)
+   menuJogo:insert(navePlayer)
+   --menuJogo:insert(tiroLazer)
+
+   uiGrupo:insert(buttons[1])
+   uiGrupo:insert(buttons[2])
+   uiGrupo:insert(buttons[3])
+   uiGrupo:insert(buttons[4])
+   
+   --if vidas ~= 0 then
+     --loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
+     --loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0) 
+   --end     
+
+end	
+
+-- show()
+function scene:show(evento)
+ 
+    local CenaGrupo = self.view
+    local phase = evento.phase
+ 
+    if ( phase ==  "did") then
+        -- Code here runs when the scene is still off screen (but is about to come on screen)
+	    physics.start( )
+	    for j=1, #buttons do 
+	        buttons[j]:addEventListener("touch", moverNavePlayer)
+        end
+        Runtime:addEventListener("enterFrame", atualizarPosicaoPlayer) 
+        --Runtime:addEventListener("touch", movimentarObjeto)
+        Runtime:addEventListener("touch", atualizarCordenadasObjeto)
+        Runtime:addEventListener("collision",onCollision)
+
+        loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
+        loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0) 
+        
+    end
+end
+
+-- hide()
+function scene:hide(evento)
+ 
+    local CenaGrupo = self.view
+    local phase = evento.phase
+ 
+    if ( phase == "will" ) then
+        -- Code here runs when the scene is on screen (but is about to go off screen)
+         Runtime:removeEventListener("collision",onCollision)
+         display.remove( loopTimerAsteroid )
+         display.remove( loopTimerInimigo )
+         physics.pause( )
+    end
+end
+ 
+-- destroy()
+function scene:destroy(evento)
+ 
+    local CenaGrupo = self.view
+    -- Code here runs prior to the removal of scene's view 
+
+end
+
+ 
+
+--criarAsteroid()
+
+
+
+
+--loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
+
+
+--loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0)
+
+
+
+
+
+
+--navePlayer:addEventListener( "tap", criarLaser )
+
+--if(vidas == 0) then
+   --display.remove(tiroLazer)
+--end
+
+
+
+--for j=1, #buttons do 
+--	buttons[j]:addEventListener("touch", moverNavePlayer)
+--end
+
+
+
+--Runtime:addEventListener("enterFrame", atualizarPosicaoPlayer) 
 --Runtime:addEventListener("touch", movimentarObjeto)
- Runtime:addEventListener("touch", atualizarCordenadasObjeto)
- Runtime:addEventListener("collision",onCollision)
+ --Runtime:addEventListener("touch", atualizarCordenadasObjeto)
+-- Runtime:addEventListener("collision",onCollision)
 
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
