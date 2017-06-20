@@ -35,11 +35,12 @@ local loopTimerInimigo
 local vidas = 3
 local pontos = 0
 local morreu = false
+local tiroLazer
 
 --Grupos dos elementos na tela
-local grupoPlanodeFundo
-local menuJogo
-local uiGrupo
+local grupoPlanodeFundo = display.newGroup()
+local menuJogo = display.newGroup()
+local uiGrupo = display.newGroup()
     
 buttons[1] = display.newImageRect("button.png", 60,50)
     buttons[1].x = 600
@@ -70,9 +71,9 @@ function scene:create(evento)
 
    --physics.pause()
    
-   grupoPlanodeFundo = display.newGroup()
-   menuJogo = display.newGroup()
-   uiGrupo = display.newGroup()
+   --grupoPlanodeFundo = display.newGroup()
+   --menuJogo = display.newGroup()
+   --uiGrupo = display.newGroup()
 
    grupoCena:insert(grupoPlanodeFundo)
    grupoCena:insert(menuJogo)
@@ -94,11 +95,18 @@ function scene:create(evento)
    navePlayer.myName = "ship"
    navePlayer.x = w * .5 + 10
    navePlayer.y = h * .5 + 100
+   
+
+--tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
+     --                          x = display.contentWidth/2 - 280,
+     --                        y = display.contentHeight/2 + 360,  
+     --                        shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }, onPress = criarLaser}  )
 
     
    grupoPlanodeFundo:insert(fundoTela)
    menuJogo:insert(navePlayer)
-   
+   --menuJogo:insert(tiroLazer)
+
    uiGrupo:insert(buttons[1])
    uiGrupo:insert(buttons[2])
    uiGrupo:insert(buttons[3])
@@ -139,16 +147,6 @@ function scene:destroy(evento)
     local CenaGrupo = self.view
     -- Code here runs prior to the removal of scene's view 
 end
-    
-
-    display.setStatusBar( display.HiddenStatusBar )
---[[
- local function atualizarStatusPlayer()
-
-	vidaTexto.text = "vidas: "..vidas
-	pontosTexto.text = "pontos: "..pontos
-
- end]]
 
  local function criarAsteroid(evento)
  	--local asteroid = display.newImageRect( menuJogo, sheetObjects, 2, 102, 85 )
@@ -425,13 +423,14 @@ end--fim do elseif!
 
 end--fim do ouvinte! 
 
-local tiroLazer
 tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
                                x = display.contentWidth/2 - 280,
                              y = display.contentHeight/2 + 360,  
                              shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }, onPress = criarLaser}  )
 
-tiroLazer:addEventListener( "tap", criarLaser )
+
+--tiroLazer:addEventListener( "tap", criarLaser )
+
 --navePlayer:addEventListener( "tap", criarLaser )
 
 if(vidas == 0) then
@@ -445,16 +444,16 @@ local rotacionarObjeto = function(e)
 	if eventName == "began" or eventName == "moved" then
 		if direction == "up"  then 
 			navePlayer.rotation = 0 
-           --laser.rotation = 0
+           
 		elseif direction == "down" then 
 			navePlayer.rotation = 180
-			--laser = laser.rotation =180
+			
 		elseif direction == "right" then---ALTERADO NESSE BLOCO!
 			navePlayer.rotation = 90
-			--laser = laser.rotation = 90
+			
 		elseif direction == "left" then
 			navePlayer.rotation = -90
-			---laser = laser.rotation = -90
+			
 		end
 	
 	end
