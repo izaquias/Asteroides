@@ -35,6 +35,8 @@ physics.setGravity(0,0)
  local vidas = 3
  local pontos = 0
  local morreu = false
+ local somExplosao
+ local somTiro
  --local  tiroLazer
 
  local function criarAsteroid(evento)
@@ -171,6 +173,7 @@ local function checarColisoes(event)
 			
 			           display.remove( obj1 )
 			           display.remove( obj2 )
+			           audio.play( somExplosao )
 
 			           for i = #asteroidsTable, 1, -1 do
                             if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
@@ -187,6 +190,7 @@ local function checarColisoes(event)
 			
 			           display.remove( obj1 )
 			           display.remove( obj2 )
+			           audio.play( somExplosao )
 
 			            for i = #asteroidsTable, 1, -1 do
                             if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
@@ -202,6 +206,7 @@ local function checarColisoes(event)
 			               (obj1.myName == "asteroid" and obj2.myName == "ship") then      
 		                    if (morreu == false) then
 		        	            morreu = true
+		        	            audio.play( somExplosao )
 		        	            vidas = vidas - 1
 		        	            vidaTexto.text = "Vidas:"..vidas
 		        	            if (vidas == 0) then
@@ -217,6 +222,7 @@ local function checarColisoes(event)
                     elseif (obj1.myName == "ship" and obj2.myName == "inimigo") or 
 			               (obj1.myName == "inimigo" and obj2.myName == "ship") then      
 		                    if (morreu == false) then
+		                    	audio.play( somExplosao )
 		        	            morreu = true
 		        	            vidas = vidas - 1
 		        	            vidaTexto.text = "Vidas:"..vidas
@@ -316,8 +322,7 @@ local function criarLaser(evento)
 	laser.myName = "laser"
 	laser.x = navePlayer.x
 	laser.y = navePlayer.y
-	
-	--laser.collType = "laser"
+	audio.play( somTiro )
 	
 	laser:toBack( )
     
@@ -336,7 +341,7 @@ elseif navePlayer.rotation == -90 then
 	laser.myName = "laser"
 	laser.x = navePlayer.x
 	laser.y = navePlayer.y
-	
+	audio.play( somTiro )
 	laser:toBack( )
       
       --atira para esquerda!
@@ -352,7 +357,7 @@ elseif navePlayer.rotation == 180 then
 	laser.myName = "laser"
 	laser.x = navePlayer.x
 	laser.y = navePlayer.y
-	
+	audio.play( somTiro )
 	laser:toBack( )
      --atira para baixo!
      laser.rotation = 180
@@ -367,7 +372,7 @@ elseif navePlayer.rotation == 0 then
 	laser.myName = "laser"
 	laser.x = navePlayer.x
 	laser.y = navePlayer.y
-	
+	audio.play( somTiro )
 	laser:toBack( )
     --atira para cima!
     laser.rotation = 0  
@@ -484,8 +489,10 @@ end
 function scene:create(evento)
 local grupoCena = self.view 
 
-   physics.pause()
+physics.pause()
 
+somExplosao = audio.loadSound( "explosao.wav" )
+somTiro = audio.loadSound( "tiro1.mp3" )
 
 --Grupos dos elementos na tela
  grupoPlanodeFundo = display.newGroup()
