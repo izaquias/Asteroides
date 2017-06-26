@@ -15,9 +15,9 @@ local function redirecionarGame()
     composer.gotoScene("Game")
 end
 
-local function VizualizarMaiorPontuacao()
-	composer.removeScene("MaiorPontuacao")
-	composer.gotoScene("MaiorPontuacao")
+local function redirecionarRankPontuacao()
+	composer.removeScene("ScoreHank")
+	composer.gotoScene("ScoreHank")
 end
 
 local titulo
@@ -59,7 +59,7 @@ local tela
         pontos = display.newImageRect( "botao.png",  120, 100 )
         pontos.x = display.contentWidth/2+160
         pontos.y = display.contentHeight/2+150
-
+        pontos:addEventListener( "tap", redirecionarRankPontuacao )  
         grupoCena:insert(pontos) 
 end
 

@@ -141,7 +141,10 @@ local function chamarInimigo()
 end
 
 local function gameOver()
-	composer.gotoScene("Menu")
+	composer.setVariable( "finalScore", pontos)
+	composer.removeScene( "ScoreHank" )
+	composer.gotoScene( "ScoreHank" )
+	--composer.gotoScene("Menu")
 end
 
 local function restaurarNave()
@@ -156,7 +159,7 @@ local function restaurarNave()
 	end })
 end
 
-local function onCollision(event)
+local function checarColisoes(event)
 	
 	if (event.phase == "began") then
 		
@@ -386,7 +389,7 @@ tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
                              shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }}  )--, onPress = criarLaser
 
 
-tiroLazer:addEventListener( "tap", criarLaser )
+--tiroLazer:addEventListener( "tap", criarLaser )
 
 local rotacionarObjeto = function(e)
 	local eventName = e.phase
@@ -572,8 +575,8 @@ function scene:show(evento)
         Runtime:addEventListener("enterFrame", atualizarPosicaoPlayer) 
         --Runtime:addEventListener("touch", movimentarObjeto)
         Runtime:addEventListener("touch", atualizarCordenadasObjeto)
-        Runtime:addEventListener("collision",onCollision)
-        
+        Runtime:addEventListener("collision",checarColisoes)
+        tiroLazer:addEventListener( "tap", criarLaser )
         --Runtime:addEventListener("enterFrame", criarLaserInimigo)
         
         loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
@@ -591,7 +594,7 @@ function scene:hide(evento)
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
          physics.pause( )
-         Runtime:removeEventListener("collision",onCollision)
+         Runtime:removeEventListener("collision",checarColisoes)
          
          
     end
