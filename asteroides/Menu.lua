@@ -87,6 +87,7 @@ end
 function scene:destroy(evento)
 	local CenaGrupo = self.view
     -- Code here runs prior to the removal of scene's view 
+
 end
 
 scene:addEventListener( "create", scene ) -- adiciona o evento da funcao de criar 

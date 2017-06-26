@@ -13,14 +13,14 @@ physics.setGravity(0,0)
 --math.randomseed(os.time())
 
 --Localização imagens
-local sheetInfo = require("sprites.sprite")
-local sheetObjects = graphics.newImageSheet( "sprites/sprite.png", sheetInfo:getSheet() )
+ local sheetInfo = require("sprites.sprite")
+ local sheetObjects = graphics.newImageSheet( "sprites/sprite.png", sheetInfo:getSheet() )
 
  local w = display.contentWidth
  local h = display.contentHeight
 
- asteroidsTable = {}
- buttons = {}
+ local asteroidsTable = {}
+ local buttons = {}
 
  local vidaTexto
  local pontosTexto
@@ -37,9 +37,9 @@ local sheetObjects = graphics.newImageSheet( "sprites/sprite.png", sheetInfo:get
  local morreu = false
  --local  tiroLazer
 
-local function criarAsteroid(evento)
+ local function criarAsteroid(evento)
  	--local asteroid = display.newImageRect( menuJogo, sheetObjects, 2, 102, 85 )
- 	print( menuJogo )
+ 	--print( menuJogo )
  	asteroid = display.newImageRect("meteoro.png", 102,85)
 
  	asteroid:setFillColor( 0,1,0 )
@@ -78,13 +78,14 @@ local function chamarAsteroid()
     
     for i = #asteroidsTable, 1, -1 do
        local asteroidAlvo = asteroidsTable[i]
-
+       if vidas ~= 0 then
        if asteroidAlvo.x < -100 or asteroidAlvo.x > w + 100 or 
        	  asteroidAlvo.y < -100 or asteroidAlvo.y > h + 100
        then
        display.remove( asteroidAlvo )	  
        table.remove( asteroidsTable, i )
        end	
+      end
     end
 
 end
@@ -122,17 +123,19 @@ local function criarInimigo(evento)
 end
 
 local function chamarInimigo()
+	
 	criarInimigo()--cria os inimigos na tela!
     
     for i = #asteroidsTable, 1, -1 do
        local inimigoAlvo = asteroidsTable[i]
-
-       if inimigoAlvo.x < -100 or inimigoAlvo.x > w + 100 or 
-       	  inimigoAlvo.y < -100 or inimigoAlvo.y > h + 100
-       then
-       display.remove( inimigoAlvo )	  
-       table.remove( asteroidsTable, i )
-       end	
+        if vidas ~= 0 then
+            if inimigoAlvo.x < -100 or inimigoAlvo.x > w + 100 or 
+       	       inimigoAlvo.y < -100 or inimigoAlvo.y > h + 100
+            then
+                display.remove( inimigoAlvo )	  
+                table.remove( asteroidsTable, i )
+            end	
+        end
     end
 
 end
@@ -229,8 +232,81 @@ local function onCollision(event)
 	end
 end
 
+local function criarLaserInimigo(evento)
+
+
+    local geraDirecaoLaserInimigo = math.random(4)
+
+        if geraDirecaoLaserInimigo == 1 then
+            
+
+            local laserInimigo = display.newImageRect( "laserInimigo.png", 14, 30 )
+	        physics.addBody( laserInimigo, "dinamic", {isSensor = true})
+	        laserInimigo.isBullet = true
+	        laserInimigo.myName = "laserInimigo"
+            laserInimigo.x = inimigo
+            laserInimigo.y = inimigo      
+      
+            laserInimigo:toBack( )
+     
+          --laserInimigo.rotation = math.random(512)
+            --para baixo
+            transition.to( laserInimigo, {y = 900, time = 300,
+	              onComplete = function ()
+		      display.remove(laserInimigo)
+            end} )
+        
+        elseif geraDirecaoLaserInimigo == 2 then
+            local laserInimigo = display.newImageRect( "laserInimigo.png", 14, 30 )
+            physics.addBody( laserInimigo, "dinamic", {isSensor = true})
+	        laserInimigo.isBullet = true
+	        laserInimigo.myName = "laserInimigo"
+            laserInimigo.x = inimigo
+            laserInimigo.y = inimigo      
+      
+            laserInimigo:toBack( )
+
+            --para direita  
+	        transition.to( laser, {x = 900, time = 500,
+	              onComplete = function ()
+		       display.remove(laser)
+	        end} )
+        elseif geraDirecaoLaserInimigo == 3 then
+            local laserInimigo = display.newImageRect( "laserInimigo.png", 14, 30 )
+            physics.addBody( laserInimigo, "dinamic", {isSensor = true})
+	        laserInimigo.isBullet = true
+	        laserInimigo.myName = "laserInimigo"
+            laserInimigo.x = inimigo
+            laserInimigo.y = inimigo      
+      
+            laserInimigo:toBack( )
+            --para esquerda
+            transition.to( laser, {x = -50, time = 500,
+	             onComplete = function ()
+	           display.remove(laser)
+	  end} )
+        elseif geraDirecaoLaserInimigo == 4 then
+            local laserInimigo = display.newImageRect( "laserInimigo.png", 14, 30 )
+            physics.addBody( laserInimigo, "dinamic", {isSensor = true})
+	        laserInimigo.isBullet = true
+	        laserInimigo.myName = "laserInimigo"
+            laserInimigo.x = inimigo
+            laserInimigo.y = inimigo      
+      
+            laserInimigo:toBack( )
+            --para cima
+            transition.to( laser, {y= -110, time = 500, 
+	               onComplete = function()
+	            display.remove( laser )
+	 end} ) 
+        end	        
+
+end
+
+--Runtime:addEventListener("enterFrame", criarLaserInimigo)
+
 local function criarLaser(evento)
-   if   evento.phase == "began" and  navePlayer.rotation == 90 then
+   if   navePlayer.rotation == 90 then
     local laser = display.newImageRect( menuJogo, sheetObjects, 3, 14, 40 )
 	physics.addBody( laser, "dinamic", {isSensor = true})
 	laser.isBullet = true
@@ -307,10 +383,10 @@ end--fim do ouvinte!
 tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
                                x = display.contentWidth/2 - 280,
                              y = display.contentHeight/2 + 360,  
-                             shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }, onPress = criarLaser}  )
+                             shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }}  )--, onPress = criarLaser
 
 
---tiroLazer:addEventListener( "tap", criarLaser )
+tiroLazer:addEventListener( "tap", criarLaser )
 
 local rotacionarObjeto = function(e)
 	local eventName = e.phase
@@ -370,11 +446,12 @@ end
 local function atualizarCordenadasObjeto(evento)
 	if evento.phase == "began" then
 		local j=1
-
-        for j=1, #buttons do 
-	       buttons[j]:addEventListener("touch", rotacionarObjeto)
-	      --Runtime:addEventListener("touch", movimentarObjeto)
-		end 
+        if vidas ~= 0 then 
+           for j=1, #buttons do 
+	          buttons[j]:addEventListener("touch", rotacionarObjeto)
+	         --Runtime:addEventListener("touch", movimentarObjeto)
+		    end 
+	    end
 	else if evento.phase == "ended" or evento.phase == "canceled" then
 
 	end	
@@ -452,12 +529,10 @@ buttons[1] = display.newImageRect("button.png", 60,50)
 
    navePlayer = display.newImageRect( sheetObjects, 4, 98, 79)
    navePlayer.x = display.contentCenterX
-   navePlayer.y = h - 100
+   navePlayer.y = h - 450
+   navePlayer.myName = "ship"
    --navePlayer:setFillColor( 0,0,1 )
    physics.addBody( navePlayer, {radius = 30} )
-   navePlayer.myName = "ship"
-   navePlayer.x = w * .5 + 10
-   navePlayer.y = h * .5 + 100
    
 
 --tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
@@ -498,7 +573,9 @@ function scene:show(evento)
         --Runtime:addEventListener("touch", movimentarObjeto)
         Runtime:addEventListener("touch", atualizarCordenadasObjeto)
         Runtime:addEventListener("collision",onCollision)
-
+        
+        --Runtime:addEventListener("enterFrame", criarLaserInimigo)
+        
         loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
         loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0) 
         
@@ -513,10 +590,10 @@ function scene:hide(evento)
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-         Runtime:removeEventListener("collision",onCollision)
-         display.remove( loopTimerAsteroid )
-         display.remove( loopTimerInimigo )
          physics.pause( )
+         Runtime:removeEventListener("collision",onCollision)
+         
+         
     end
 end
  
@@ -525,7 +602,8 @@ function scene:destroy(evento)
  
     local CenaGrupo = self.view
     -- Code here runs prior to the removal of scene's view 
-
+      --removeSelf(menuJogo )
+      --removeSelf(loopTimerInimigo )
 end
 
  
