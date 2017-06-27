@@ -10,7 +10,6 @@ local physics = require("physics")
 physics.start( )
 physics.setGravity(0,0)
 
---math.randomseed(os.time())
 
 --Localização imagens
  local sheetInfo = require("sprites.sprite")
@@ -37,6 +36,7 @@ physics.setGravity(0,0)
  local morreu = false
  local somExplosao
  local somTiro
+ local somFundo
  --local  tiroLazer
 
  local function criarAsteroid(evento)
@@ -143,10 +143,17 @@ local function chamarInimigo()
 end
 
 local function gameOver()
+	if vidas == 0 then
+		timer.cancel( loopTimerAsteroid )
+		timer.cancel( loopTimerInimigo )
+		--timer.pause( loopTimerAsteroid )
+		--timer.pause( loopTimerInimigo )
+
+	end	
 	composer.setVariable( "finalScore", pontos)
 	composer.removeScene( "ScoreHank" )
-	composer.gotoScene( "ScoreHank" )
-	--composer.gotoScene("Menu")
+	--composer.gotoScene( "ScoreHank" )
+	composer.gotoScene("Menu")
 end
 
 local function restaurarNave()
@@ -388,12 +395,13 @@ end--fim do elseif!
 
 end--fim do ouvinte! 
 
+--[[
 tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
                                x = display.contentWidth/2 - 280,
                              y = display.contentHeight/2 + 360,  
                              shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }}  )--, onPress = criarLaser
 
-
+]]
 --tiroLazer:addEventListener( "tap", criarLaser )
 
 local rotacionarObjeto = function(e)
@@ -493,6 +501,7 @@ physics.pause()
 
 somExplosao = audio.loadSound( "explosao.wav" )
 somTiro = audio.loadSound( "tiro1.mp3" )
+somFundo = audio.loadStream( "longSine.wav" )--soundFoda
 
 --Grupos dos elementos na tela
  grupoPlanodeFundo = display.newGroup()
@@ -545,15 +554,15 @@ buttons[1] = display.newImageRect("button.png", 60,50)
    physics.addBody( navePlayer, {radius = 30} )
    
 
---tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
-     --                          x = display.contentWidth/2 - 280,
-     --                        y = display.contentHeight/2 + 360,  
-     --                        shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }, onPress = criarLaser}  )
+tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
+                               x = display.contentWidth/2 - 280,
+                             y = display.contentHeight/2 + 360,  
+                             shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }, onPress = criarLaser}  )
 
-    
+   uiGrupo:insert(tiroLazer) 
    grupoPlanodeFundo:insert(fundoTela)
    menuJogo:insert(navePlayer)
-   --menuJogo:insert(tiroLazer)
+   
 
    uiGrupo:insert(buttons[1])
    uiGrupo:insert(buttons[2])
@@ -588,7 +597,7 @@ function scene:show(evento)
         
         loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
         loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0) 
-        
+        audio.play( somFundo , {channel = 1, loops = -1} )
     end
 end
 
@@ -602,8 +611,12 @@ function scene:hide(evento)
         -- Code here runs when the scene is on screen (but is about to go off screen)
          physics.pause( )
          Runtime:removeEventListener("collision",checarColisoes)
-         
-         
+         audio.stop( 1 )
+
+		timer.cancel( loopTimerAsteroid )
+		timer.cancel( loopTimerInimigo )
+
+		
     end
 end
  
@@ -612,45 +625,11 @@ function scene:destroy(evento)
  
     local CenaGrupo = self.view
     -- Code here runs prior to the removal of scene's view 
-      --removeSelf(menuJogo )
-      --removeSelf(loopTimerInimigo )
+      audio.dispose( somExplosao )
+      audio.dispose( somTiro )
+      audio.dispose( somFundo )
+      
 end
-
- 
-
---criarAsteroid()
-
-
-
-
---loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
-
-
---loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0)
-
-
-
-
-
-
---navePlayer:addEventListener( "tap", criarLaser )
-
---if(vidas == 0) then
-   --display.remove(tiroLazer)
---end
-
-
-
---for j=1, #buttons do 
---	buttons[j]:addEventListener("touch", moverNavePlayer)
---end
-
-
-
---Runtime:addEventListener("enterFrame", atualizarPosicaoPlayer) 
---Runtime:addEventListener("touch", movimentarObjeto)
- --Runtime:addEventListener("touch", atualizarCordenadasObjeto)
--- Runtime:addEventListener("collision",onCollision)
 
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
