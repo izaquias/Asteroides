@@ -37,7 +37,11 @@ physics.setGravity(0,0)
  local somExplosao
  local somTiro
  local somFundo
- --local  tiroLazer
+ local  tiroLazer
+
+ local grupoPlanodeFundo
+ local menuJogo
+ local uiGrupo
 
  local function criarAsteroid(evento)
  	--local asteroid = display.newImageRect( menuJogo, sheetObjects, 2, 102, 85 )
@@ -83,6 +87,17 @@ local function chamarAsteroid()
        if vidas ~= 0 then
        if asteroidAlvo.x < -100 or asteroidAlvo.x > w + 100 or 
        	  asteroidAlvo.y < -100 or asteroidAlvo.y > h + 100
+       then
+       display.remove( asteroidAlvo )	  
+       table.remove( asteroidsTable, i )
+       end	
+      end
+    end
+
+    for i = #asteroidsTable, 1, -1 do
+       local asteroidAlvo = asteroidsTable[i]
+       if vidas == 0 then
+       if asteroidAlvo ~= nil
        then
        display.remove( asteroidAlvo )	  
        table.remove( asteroidsTable, i )
@@ -140,6 +155,17 @@ local function chamarInimigo()
         end
     end
 
+    for i = #asteroidsTable, 1, -1 do
+       local inimigoAlvo = asteroidsTable[i]
+        if vidas == 0 then
+            if inimigoAlvo ~= nil
+            then
+                display.remove( inimigoAlvo )	  
+                table.remove( asteroidsTable, i )
+            end	
+        end
+    end
+    
 end
 
 local function gameOver()
@@ -246,6 +272,13 @@ local function checarColisoes(event)
 		            end 
         end
 	end
+	--for i=1, #asteroidsTable do
+	   
+
+	  -- print( asteroidsTable.inimigo )	
+	
+--end
+	
 end
 
 local function criarLaserInimigo(evento)
@@ -260,6 +293,7 @@ local function criarLaserInimigo(evento)
 	        physics.addBody( laserInimigo, "dinamic", {isSensor = true})
 	        laserInimigo.isBullet = true
 	        laserInimigo.myName = "laserInimigo"
+
             laserInimigo.x = inimigo
             laserInimigo.y = inimigo      
       
@@ -557,7 +591,7 @@ buttons[1] = display.newImageRect("button.png", 60,50)
 tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
                                x = display.contentWidth/2 - 280,
                              y = display.contentHeight/2 + 360,  
-                             shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }, onPress = criarLaser}  )
+                             shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }}  )--, onPress = criarLaser
 
    uiGrupo:insert(tiroLazer) 
    grupoPlanodeFundo:insert(fundoTela)
@@ -613,9 +647,12 @@ function scene:hide(evento)
          Runtime:removeEventListener("collision",checarColisoes)
          audio.stop( 1 )
 
-		timer.cancel( loopTimerAsteroid )
-		timer.cancel( loopTimerInimigo )
+		
+		--timer.cancel( loopTimerAsteroid )
+	    --timer.cancel( loopTimerInimigo )
+	    
 
+        
 		
     end
 end
@@ -628,7 +665,14 @@ function scene:destroy(evento)
       audio.dispose( somExplosao )
       audio.dispose( somTiro )
       audio.dispose( somFundo )
+      timer.cancel( loopTimerAsteroid )
+      timer.cancel( loopTimerInimigo )
+      display.remove( loopTimerAsteroid )
+	    display.remove( loopTimerInimigo )
+	    loopTimerInimigo = nil
+	    loopTimerAsteroid = nil
       
+
 end
 
 scene:addEventListener( "create", scene )
