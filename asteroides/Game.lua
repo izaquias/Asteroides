@@ -19,6 +19,7 @@ physics.setGravity(0,0)
  local h = display.contentHeight
 
  local asteroidsTable = {}
+ local inimigosTable = {}
  local buttons = {}
 
  local vidaTexto
@@ -112,7 +113,7 @@ local function criarInimigo(evento)
     inimigo = display.newCircle( menuJogo, 100, 100, 30 )
  	inimigo:setFillColor( 1,1,1 )
  	 
- 	table.insert( asteroidsTable,  inimigo )
+ 	table.insert( inimigosTable,  inimigo )
  	physics.addBody( inimigo, "dinamic", {radius = 40, bounce = 1, friction = 0.8} )
  	inimigo.myName = "inimigo" 
  	
@@ -143,25 +144,25 @@ local function chamarInimigo()
 	
 	criarInimigo()--cria os inimigos na tela!
     
-    for i = #asteroidsTable, 1, -1 do
-       local inimigoAlvo = asteroidsTable[i]
+    for i = #inimigosTable, 1, -1 do
+       local inimigoAlvo = inimigosTable[i]
         if vidas ~= 0 then
             if inimigoAlvo.x < -100 or inimigoAlvo.x > w + 100 or 
        	       inimigoAlvo.y < -100 or inimigoAlvo.y > h + 100
             then
                 display.remove( inimigoAlvo )	  
-                table.remove( asteroidsTable, i )
+                table.remove( inimigosTable, i )
             end	
         end
     end
 
-    for i = #asteroidsTable, 1, -1 do
-       local inimigoAlvo = asteroidsTable[i]
+    for i = #inimigosTable, 1, -1 do
+       local inimigoAlvo = inimigosTable[i]
         if vidas == 0 then
             if inimigoAlvo ~= nil
             then
                 display.remove( inimigoAlvo )	  
-                table.remove( asteroidsTable, i )
+                table.remove( inimigosTable, i )
             end	
         end
     end
@@ -172,14 +173,11 @@ local function gameOver()
 	if vidas == 0 then
 		timer.cancel( loopTimerAsteroid )
 		timer.cancel( loopTimerInimigo )
-		--timer.pause( loopTimerAsteroid )
-		--timer.pause( loopTimerInimigo )
-
-	end	
+    end	
 	composer.setVariable( "finalScore", pontos)
 	composer.removeScene( "ScoreHank" )
-	--composer.gotoScene( "ScoreHank" )
-	composer.gotoScene("Menu")
+	composer.gotoScene( "ScoreHank" )
+	--composer.gotoScene("Menu")
 end
 
 local function restaurarNave()
@@ -225,9 +223,9 @@ local function checarColisoes(event)
 			           display.remove( obj2 )
 			           audio.play( somExplosao )
 
-			            for i = #asteroidsTable, 1, -1 do
-                            if asteroidsTable[i] == obj1 or asteroidsTable[i] == obj2 then
-                                table.remove( asteroidsTable, i )
+			            for i = #inimigosTable, 1, -1 do
+                            if inimigosTable[i] == obj1 or inimigosTable[i] == obj2 then
+                                table.remove( inimigosTable, i )
                                 break
                             end	
 		                end
@@ -272,18 +270,18 @@ local function checarColisoes(event)
 		            end 
         end
 	end
-	--for i=1, #asteroidsTable do
+	
+	for i=1, #inimigosTable do
 	   
 
-	  -- print( asteroidsTable.inimigo )	
+	   print( inimigosTable.inimigo )	
 	
---end
+    end
 	
 end
 
 local function criarLaserInimigo(evento)
-
-
+ 
     local geraDirecaoLaserInimigo = math.random(4)
 
         if geraDirecaoLaserInimigo == 1 then
@@ -293,9 +291,22 @@ local function criarLaserInimigo(evento)
 	        physics.addBody( laserInimigo, "dinamic", {isSensor = true})
 	        laserInimigo.isBullet = true
 	        laserInimigo.myName = "laserInimigo"
-
-            laserInimigo.x = inimigo
-            laserInimigo.y = inimigo      
+	        
+	        for i = #inimigosTable, 1, -1 do
+            local inimigoAlvo = inimigosTable[i]
+                if vidas ~= 0 then
+                    if inimigoAlvo.x == -100 or inimigoAlvo.x == w or 
+       	            inimigoAlvo.y == -100 or inimigoAlvo.y == h
+                    then
+                    --display.remove( inimigoAlvo )	  
+                    --table.remove( inimigosTable, i )
+                     laserInimigo.x = inimigoAlvo
+                     laserInimigo.y = inimigoAlvo
+                    end	
+                end
+            end
+            
+                 
       
             laserInimigo:toBack( )
      
@@ -311,8 +322,22 @@ local function criarLaserInimigo(evento)
             physics.addBody( laserInimigo, "dinamic", {isSensor = true})
 	        laserInimigo.isBullet = true
 	        laserInimigo.myName = "laserInimigo"
-            laserInimigo.x = inimigo
-            laserInimigo.y = inimigo      
+	        for i = #inimigosTable, 1, -1 do
+            local inimigoAlvo = inimigosTable[i]
+                if vidas ~= 0 then
+                    if inimigoAlvo.x == -100 or inimigoAlvo.x == w or 
+       	            inimigoAlvo.y == -100 or inimigoAlvo.y == h
+                    then
+                    --display.remove( inimigoAlvo )	  
+                    --table.remove( inimigosTable, i )
+                     laserInimigo.x = inimigoAlvo
+                     laserInimigo.y = inimigoAlvo
+                    end	
+                end
+            end
+            
+            --laserInimigo.x = #inimigosTable.inimigo
+            --laserInimigo.y = #inimigosTable.inimigo      
       
             laserInimigo:toBack( )
 
@@ -326,8 +351,23 @@ local function criarLaserInimigo(evento)
             physics.addBody( laserInimigo, "dinamic", {isSensor = true})
 	        laserInimigo.isBullet = true
 	        laserInimigo.myName = "laserInimigo"
-            laserInimigo.x = inimigo
-            laserInimigo.y = inimigo      
+	        for i = #inimigosTable, 1, -1 do
+            local inimigoAlvo = inimigosTable[i]
+                if vidas ~= 0 then
+                    if inimigoAlvo.x == -100 or inimigoAlvo.x == w or 
+       	            inimigoAlvo.y == -100 or inimigoAlvo.y == h
+                    then
+                    --display.remove( inimigoAlvo )	  
+                    --table.remove( inimigosTable, i )
+                     laserInimigo.x = inimigoAlvo
+                     laserInimigo.y = inimigoAlvo
+                    end	
+                end
+            end
+            
+            
+            --laserInimigo.x = #inimigosTable.inimigo
+            --laserInimigo.y = #inimigosTable.inimigo      
       
             laserInimigo:toBack( )
             --para esquerda
@@ -340,8 +380,23 @@ local function criarLaserInimigo(evento)
             physics.addBody( laserInimigo, "dinamic", {isSensor = true})
 	        laserInimigo.isBullet = true
 	        laserInimigo.myName = "laserInimigo"
-            laserInimigo.x = inimigo
-            laserInimigo.y = inimigo      
+            
+            for i = #inimigosTable, 1, -1 do
+            local inimigoAlvo = inimigosTable[i]
+                if vidas ~= 0 then
+                    if inimigoAlvo.x == -100 or inimigoAlvo.x == w or 
+       	            inimigoAlvo.y == -100 or inimigoAlvo.y == h
+                    then
+                    --display.remove( inimigoAlvo )	  
+                    --table.remove( inimigosTable, i )
+                     laserInimigo.x = inimigoAlvo
+                     laserInimigo.y = inimigoAlvo
+                    end	
+                end
+            end
+            
+            --laserInimigo.x = #inimigosTable.inimigo
+            --laserInimigo.y = #inimigosTable.inimigo      
       
             laserInimigo:toBack( )
             --para cima
@@ -422,21 +477,10 @@ elseif navePlayer.rotation == 0 then
 	        display.remove( laser )
 	 end} ) 
 
---else 
---	print( "Não fui programdo para fazer nada aqui!" )
-
 end--fim do elseif!
 
 end--fim do ouvinte! 
 
---[[
-tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
-                               x = display.contentWidth/2 - 280,
-                             y = display.contentHeight/2 + 360,  
-                             shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }}  )--, onPress = criarLaser
-
-]]
---tiroLazer:addEventListener( "tap", criarLaser )
 
 local rotacionarObjeto = function(e)
 	local eventName = e.phase
@@ -602,12 +646,7 @@ tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
    uiGrupo:insert(buttons[2])
    uiGrupo:insert(buttons[3])
    uiGrupo:insert(buttons[4])
-   
-   --if vidas ~= 0 then
-     --loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
-     --loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0) 
-   --end     
-
+  
 end	
 
 -- show()
@@ -627,6 +666,7 @@ function scene:show(evento)
         Runtime:addEventListener("touch", atualizarCordenadasObjeto)
         Runtime:addEventListener("collision",checarColisoes)
         tiroLazer:addEventListener( "tap", criarLaser )
+        
         --Runtime:addEventListener("enterFrame", criarLaserInimigo)
         
         loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
@@ -651,9 +691,6 @@ function scene:hide(evento)
 		--timer.cancel( loopTimerAsteroid )
 	    --timer.cancel( loopTimerInimigo )
 	    
-
-        
-		
     end
 end
  
@@ -665,14 +702,6 @@ function scene:destroy(evento)
       audio.dispose( somExplosao )
       audio.dispose( somTiro )
       audio.dispose( somFundo )
-      timer.cancel( loopTimerAsteroid )
-      timer.cancel( loopTimerInimigo )
-      display.remove( loopTimerAsteroid )
-	    display.remove( loopTimerInimigo )
-	    loopTimerInimigo = nil
-	    loopTimerAsteroid = nil
-      
-
 end
 
 scene:addEventListener( "create", scene )
