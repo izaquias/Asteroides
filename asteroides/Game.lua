@@ -47,7 +47,7 @@ physics.setGravity(0,0)
  local function criarAsteroid(evento)
  	--local asteroid = display.newImageRect( menuJogo, sheetObjects, 2, 102, 85 )
  	--print( menuJogo )
- 	asteroid = display.newImageRect("meteoro.png", 102,85)
+ 	asteroid = display.newImageRect("meteoro.png", 102,85)--asteroid1
 
  	asteroid:setFillColor( 0,1,0 )
  	 --asteroid = display.newCircle( menuJogo, 100, 100, 30 )
@@ -270,14 +270,14 @@ local function checarColisoes(event)
 		            end 
         end
 	end
-	
+	--[[
 	for i=1, #inimigosTable do
 	   
 
-	   print( inimigosTable.inimigo )	
+	   print( inimigosTable[i].inimigo )	
 	
     end
-	
+	]]
 end
 
 local function criarLaserInimigo(evento)
@@ -302,6 +302,8 @@ local function criarLaserInimigo(evento)
                     --table.remove( inimigosTable, i )
                      laserInimigo.x = inimigoAlvo
                      laserInimigo.y = inimigoAlvo
+                     print( inimigosTable[i].inimigo )
+                     print( inimigosTable[i] )
                     end	
                 end
             end
@@ -592,26 +594,26 @@ grupoCena:insert(menuJogo)
 grupoCena:insert(uiGrupo)
    
 
-buttons[1] = display.newImageRect("button.png", 60,50)
-    buttons[1].x = 600
+buttons[1] = display.newImageRect("button.png", 70,70)
+    buttons[1].x = 130--600
     buttons[1].y = 880
     buttons[1].move = "up"
     buttons[1].rotation = -90
 
-    buttons[2] = display.newImageRect("button.png", 60,50)
-    buttons[2].x = 600
+    buttons[2] = display.newImageRect("button.png", 70,70)
+    buttons[2].x = 130--600
     buttons[2].y = 1020
     buttons[2].move = "down"
     buttons[2].rotation = 90
 
-    buttons[3] = display.newImageRect("button.png", 60,50)
-    buttons[3].x = 500 
+    buttons[3] = display.newImageRect("button.png", 70,70)
+    buttons[3].x = 30--500 
     buttons[3].y = 950
     buttons[3].move = "left"
     buttons[3].rotation = 180
 
-    buttons[4] = display.newImageRect("button.png", 60,50)
-    buttons[4].x = 700
+    buttons[4] = display.newImageRect("button.png", 70,70)
+    buttons[4].x = 230--700
     buttons[4].y = 950
     buttons[4].move = "right"
 
@@ -632,9 +634,9 @@ buttons[1] = display.newImageRect("button.png", 60,50)
    physics.addBody( navePlayer, {radius = 30} )
    
 
-tiroLazer = widget.newButton({label="Laser",width= 40,height =80,
-                               x = display.contentWidth/2 - 280,
-                             y = display.contentHeight/2 + 360,  
+tiroLazer = widget.newButton({label="LASER",width= 40,height =80,
+                               x = 650,
+                             y = display.contentHeight/2 + 440,  
                              shape="circle", fillColor = { default={ 0, 0.2, 0.5, 1 }, over={ 0, 0, 0, 0.1} }}  )--, onPress = criarLaser
 
    uiGrupo:insert(tiroLazer) 
@@ -667,7 +669,7 @@ function scene:show(evento)
         Runtime:addEventListener("collision",checarColisoes)
         tiroLazer:addEventListener( "tap", criarLaser )
         
-        --Runtime:addEventListener("enterFrame", criarLaserInimigo)
+        Runtime:addEventListener("enterFrame", criarLaserInimigo)
         
         loopTimerAsteroid = timer.performWithDelay( 1000, chamarAsteroid, 0 )
         loopTimerInimigo = timer.performWithDelay( 10000, chamarInimigo, 0) 
